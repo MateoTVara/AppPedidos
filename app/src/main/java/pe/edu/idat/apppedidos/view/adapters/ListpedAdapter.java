@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import pe.edu.idat.apppedidos.databinding.ItemListpedBinding;
 import pe.edu.idat.apppedidos.retrofit.response.ListpedResponse;
@@ -15,6 +16,7 @@ import pe.edu.idat.apppedidos.retrofit.response.ListpedResponse;
 public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHolder> {
 
     List<ListpedResponse> listpedResponseList =  new ArrayList<>();
+    List<ListpedResponse> listpedResponseListOriginal = new ArrayList<>();
 
     @NonNull
     @Override
@@ -41,8 +43,25 @@ public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHold
 
     public void setPedidos(List<ListpedResponse> pedidos){
         listpedResponseList.addAll(pedidos);
-        notifyDataSetChanged(); // Notificar cambios en los datos al adaptador
+        notifyDataSetChanged();
+        listpedResponseListOriginal.addAll(pedidos);
+    }
 
+    public void filtrarPedidos(String filtro){
+        if(filtro.isEmpty()){
+            listpedResponseList.clear();
+            listpedResponseList.addAll(listpedResponseListOriginal);
+        }else{
+            List<ListpedResponse> busquedaPedido =
+                    listpedResponseList.stream()
+                            .filter(p -> p.getRazonsocial()
+                                    .toLowerCase().contains(
+                                            filtro.toLowerCase()))
+                            .collect(Collectors.toList());
+            listpedResponseList.clear();
+            listpedResponseList.addAll(busquedaPedido);
+        }
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

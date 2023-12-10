@@ -2,6 +2,7 @@ package pe.edu.idat.apppedidos.view.fragments;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,7 +21,8 @@ import pe.edu.idat.apppedidos.view.adapters.ListpedAdapter;
 import pe.edu.idat.apppedidos.viewmodel.ListpedViewModel;
 
 
-public class ListpedFragment extends Fragment {
+public class ListpedFragment extends Fragment
+        implements SearchView.OnQueryTextListener {
 
     private FragmentListpedBinding binding;
 
@@ -48,7 +50,19 @@ public class ListpedFragment extends Fragment {
                     }
                 }
         );
+        binding.svlisped.setOnQueryTextListener(this);
         // Inflate the layout for this fragment
         return binding.getRoot();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        listpedAdapter.filtrarPedidos(newText);
+        return false;
     }
 }
