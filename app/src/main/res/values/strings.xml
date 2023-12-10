@@ -14,4 +14,18 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="lispedfragmenttitle">Lista de Pedidos</string>
     <string name="creapedfragmenttitle">Crear Pedido</string>
+    <string name="tvdetallepedido">Detalle del Pedido</string>
+    <string name="ptdocumento">Documento</string>
+    <string name="ptrazonsocial">Razón Social</string>
+    <string name="ptrucdni">RUC / DNI</string>
+    <string name="ptdireccion">Dirección</string>
+    <string name="ptreparto">Fecha de reparto</string>
+    <string name="ptvendedor">Vendedor</string>
+    <string name="ptdescripcionproducto">Descripción del producto</string>
+    <string name="ptunidad">Unidad</string>
+    <string name="ptcantidad">Cantidad</string>
+    <string name="ptprecio">Precio</string>
+    <string name="textbtncancelar">Cancelar</string>
+    <string name="textbtnregistrar">REGISTRAR</string>
+    <string name="textbtnagregardetalle">AGREGAR DETALLE</string>
 </resources>

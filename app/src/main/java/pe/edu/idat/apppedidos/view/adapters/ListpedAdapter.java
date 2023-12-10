@@ -41,6 +41,8 @@ public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHold
 
     public void setPedidos(List<ListpedResponse> pedidos){
         listpedResponseList.addAll(pedidos);
+        notifyDataSetChanged(); // Notificar cambios en los datos al adaptador
+
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
