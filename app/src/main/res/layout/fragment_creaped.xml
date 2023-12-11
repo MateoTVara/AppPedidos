@@ -99,7 +99,7 @@
         app:layout_constraintTop_toBottomOf="@+id/ptreparto" />
 
     <EditText
-        android:id="@+id/ptvendedor2"
+        android:id="@+id/ptdescripcionproducto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -113,7 +113,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/ptvendedor3"
+        android:id="@+id/ptunidadproducto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -124,10 +124,10 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/ptvendedor2" />
+        app:layout_constraintTop_toBottomOf="@+id/ptdescripcionproducto" />
 
     <EditText
-        android:id="@+id/ptvendedor4"
+        android:id="@+id/ptcantidadproducto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -138,10 +138,10 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/ptvendedor3" />
+        app:layout_constraintTop_toBottomOf="@+id/ptunidadproducto" />
 
     <EditText
-        android:id="@+id/ptvendedor5"
+        android:id="@+id/ptprecioproducto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -152,7 +152,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/ptvendedor4" />
+        app:layout_constraintTop_toBottomOf="@+id/ptcantidadproducto" />
 
     <TextView
         android:id="@+id/textView3"
@@ -175,7 +175,7 @@
         android:text="@string/textbtnagregardetalle"
         android:textSize="8sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/ptvendedor5" />
+        app:layout_constraintTop_toBottomOf="@+id/ptprecioproducto" />
 
     <Button
         android:id="@+id/btnregistrar"
@@ -204,9 +204,54 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/btncancelar"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.482"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvimportes" />
+
+    <TextView
+        android:id="@+id/tvdescripciones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tvdescripcion"
+        app:layout_constraintEnd_toStartOf="@+id/tvunidades"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnagregardetalle" />
+
+    <TextView
+        android:id="@+id/tvunidades"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tviunidad"
+        app:layout_constraintEnd_toStartOf="@+id/tvcantidades"
+        app:layout_constraintStart_toEndOf="@+id/tvdescripciones"
+        app:layout_constraintTop_toBottomOf="@+id/btnagregardetalle" />
+
+    <TextView
+        android:id="@+id/tvcantidades"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tvcantidad"
+        app:layout_constraintEnd_toStartOf="@+id/tvimportes"
+        app:layout_constraintStart_toEndOf="@+id/tvunidades"
+        app:layout_constraintTop_toBottomOf="@+id/btnagregardetalle" />
+
+    <TextView
+        android:id="@+id/tvimportes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tvimporter"
+        app:layout_constraintEnd_toStartOf="@+id/tvacciones"
+        app:layout_constraintStart_toEndOf="@+id/tvcantidades"
+        app:layout_constraintTop_toBottomOf="@+id/btnagregardetalle" />
+
+    <TextView
+        android:id="@+id/tvacciones"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tvacciones"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvimportes"
         app:layout_constraintTop_toBottomOf="@+id/btnagregardetalle" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

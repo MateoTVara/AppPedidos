@@ -28,4 +28,9 @@
     <string name="textbtncancelar">Cancelar</string>
     <string name="textbtnregistrar">REGISTRAR</string>
     <string name="textbtnagregardetalle">AGREGAR DETALLE</string>
+    <string name="tvdescripcion">Descripción</string>
+    <string name="tviunidad">Unidad</string>
+    <string name="tvcantidad">Cantidad</string>
+    <string name="tvimporter">Importe</string>
+    <string name="tvacciones">Acciones</string>
 </resources>
