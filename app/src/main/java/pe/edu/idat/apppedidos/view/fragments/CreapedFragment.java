@@ -22,67 +22,114 @@ import pe.edu.idat.apppedidos.R;
 import pe.edu.idat.apppedidos.databinding.FragmentCreapedBinding;
 import pe.edu.idat.apppedidos.databinding.FragmentListpedBinding;
 import pe.edu.idat.apppedidos.retrofit.response.ListcliResponse;
+import pe.edu.idat.apppedidos.retrofit.response.ListproResponse;
 import pe.edu.idat.apppedidos.view.adapters.ClienteAutoCompleteAdapter;
+import pe.edu.idat.apppedidos.view.adapters.ProductoAutoCompleteAdapter;
 import pe.edu.idat.apppedidos.viewmodel.CreapedViewModel;
 
 
 public class CreapedFragment extends Fragment {
 
+    private FragmentCreapedBinding binding;
     private CreapedViewModel viewModel;
     private AutoCompleteTextView ptrazonsocial;
     private EditText ptrucdni;
     private EditText ptdireccion;
-    private ClienteAutoCompleteAdapter clienteAdapter;
+    private AutoCompleteTextView ptdescripcionproducto;
+    private EditText ptunidadproducto;
+    private EditText ptprecioproducto;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_creaped, container, false);
+        binding = FragmentCreapedBinding.inflate(inflater, container, false);
 
-        ptrazonsocial = view.findViewById(R.id.ptrazonsocial);
-        ptrucdni = view.findViewById(R.id.ptrucdni);
-        ptdireccion = view.findViewById(R.id.ptdireccion);
+        ptrazonsocial = binding.ptrazonsocial;
+        ptrucdni = binding.ptrucdni;
+        ptdireccion = binding.ptdireccion;
+        ptdescripcionproducto = binding.ptdescripcionproducto;
+        ptunidadproducto = binding.ptunidadproducto;
+        ptprecioproducto = binding.ptprecioproducto;
 
         viewModel = new ViewModelProvider(this).get(CreapedViewModel.class);
 
-        ptrazonsocial.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Actualizar datos correspondientes
-                ListcliResponse clienteSeleccionado = (ListcliResponse) parent.getItemAtPosition(position);
-                if (clienteSeleccionado != null) {
-                    ptrucdni.setText(clienteSeleccionado.getRucdni());
-                    ptdireccion.setText(clienteSeleccionado.getDireccion());
-                }
+        setupViewsCliente();
+        setupViewsProducto();
+
+        return binding.getRoot();
+    }
+
+    private void setupViewsCliente() {
+        ptrazonsocial.setOnItemClickListener((parent, view, position, id) -> {
+            ListcliResponse clienteSeleccionado = (ListcliResponse) parent.getItemAtPosition(position);
+            if (clienteSeleccionado != null) {
+                ptrucdni.setText(clienteSeleccionado.getRucdni());
+                ptdireccion.setText(clienteSeleccionado.getDireccion());
             }
         });
+
         ptrazonsocial.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                viewModel.buscarClientePorRazonSocialYSugerencias(s.toString());
+                viewModel.sugerenciasPorRazonSocial(s.toString());
             }
+
             @Override
             public void afterTextChanged(Editable s) {
+            }
+        });
 
-            }
-        });
-        viewModel.sugerenciasLiveData.observe(getViewLifecycleOwner(), new Observer<List<ListcliResponse>>() {
-            @Override
-            public void onChanged(List<ListcliResponse> sugerencias) {
-                //Mostrar las sugerencias en el listado desplegado
-                mostrarSugerencias(sugerencias);
-            }
-        });
-        return view;
+        viewModel.sugerenciasLiveData.observe(getViewLifecycleOwner(), sugerencias -> mostrarSugerenciasDeClientes(sugerencias));
     }
 
-    private void mostrarSugerencias(List<ListcliResponse> sugerencias) {
+
+
+    private void mostrarSugerenciasDeClientes(List<ListcliResponse> sugerencias) {
         ClienteAutoCompleteAdapter adapter = new ClienteAutoCompleteAdapter(requireContext(), sugerencias);
         ptrazonsocial.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }
+
+    private void setupViewsProducto() {
+        ptdescripcionproducto = binding.ptdescripcionproducto;
+        ptunidadproducto = binding.ptunidadproducto;
+        ptprecioproducto = binding.ptprecioproducto;
+
+        ptdescripcionproducto.setOnItemClickListener((parent, view, position, id) -> {
+            ListproResponse productoSeleccionado = (ListproResponse) parent.getItemAtPosition(position);
+            if (productoSeleccionado != null) {
+                ptunidadproducto.setText(productoSeleccionado.getUniproduc());
+                ptprecioproducto.setText(String.valueOf(productoSeleccionado.getPrecio()));
+            }
+        });
+
+        ptdescripcionproducto.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                viewModel.sugerenciasPorDescripcion(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        viewModel.sugerenciasproductosLiveData.observe(getViewLifecycleOwner(), sugerencias -> mostrarSugerenciasDeProductos(sugerencias));
+    }
+
+
+    private void mostrarSugerenciasDeProductos(List<ListproResponse> sugerencias) {
+        ProductoAutoCompleteAdapter adapter = new ProductoAutoCompleteAdapter(requireContext(), sugerencias);
+        ptdescripcionproducto.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+    }
+
 }

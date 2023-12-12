@@ -12,38 +12,24 @@ import java.util.List;
 import pe.edu.idat.apppedidos.retrofit.MobileCliente;
 import pe.edu.idat.apppedidos.retrofit.MobileServicio;
 import pe.edu.idat.apppedidos.retrofit.response.ListcliResponse;
+import pe.edu.idat.apppedidos.retrofit.response.ListproResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreapedViewModel extends AndroidViewModel {
 
-    public MutableLiveData<ListcliResponse> clienteMutableLiveData
-            = new MutableLiveData<>();
     public MutableLiveData<List<ListcliResponse>> sugerenciasLiveData
+            = new MutableLiveData<>();
+
+    public MutableLiveData<List<ListproResponse>> sugerenciasproductosLiveData
             = new MutableLiveData<>();
 
     public CreapedViewModel(@NonNull Application application) {
         super(application);
     }
 
-    public void buscarClientePorRazonSocialYSugerencias(String razonSocial) {
-        new MobileCliente().getInstance().buscarClientePorRazonSocial(razonSocial)
-                .enqueue(new Callback<ListcliResponse>() {
-                    @Override
-                    public void onResponse(Call<ListcliResponse> call, Response<ListcliResponse> response) {
-                        if (response.isSuccessful()) {
-                            clienteMutableLiveData.setValue(response.body());
-                        } else {
-                            handleErrorResponse(response);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ListcliResponse> call, Throwable t) {
-                        handleFailure(t);
-                    }
-                });
+    public void sugerenciasPorRazonSocial(String razonSocial) {
 
         new MobileCliente().getInstance().sugerenciasPorRazonSocial(razonSocial)
                 .enqueue(new Callback<List<ListcliResponse>>() {
@@ -67,6 +53,23 @@ public class CreapedViewModel extends AndroidViewModel {
 
     private void handleFailure(Throwable t) {
         Log.e("CreapedViewModel", "Error en la conexión", t);
+    }
+
+    public void sugerenciasPorDescripcion(String descripcion){
+        new MobileCliente().getInstance().sugerenciasPorDescripcion(descripcion)
+                .enqueue(new Callback<List<ListproResponse>>() {
+                    @Override
+                    public void onResponse(Call<List<ListproResponse>> call, Response<List<ListproResponse>> response) {
+                        if (response.isSuccessful()) {
+                            sugerenciasproductosLiveData.setValue(response.body());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<ListproResponse>> call, Throwable t) {
+
+                    }
+                });
     }
 
 }

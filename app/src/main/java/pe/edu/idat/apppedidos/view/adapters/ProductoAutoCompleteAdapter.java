@@ -8,22 +8,21 @@ import androidx.annotation.*;
 
 import java.util.List;
 
-import pe.edu.idat.apppedidos.retrofit.response.ListcliResponse;
 import pe.edu.idat.apppedidos.retrofit.response.ListproResponse;
 
-public class ClienteAutoCompleteAdapter extends ArrayAdapter<ListcliResponse> {
+public class ProductoAutoCompleteAdapter extends ArrayAdapter<ListproResponse> {
 
-    public ClienteAutoCompleteAdapter(Context context, List<ListcliResponse> listcliResponses) {
-        super(context, android.R.layout.simple_dropdown_item_1line, listcliResponses);
+    public ProductoAutoCompleteAdapter(Context context, List<ListproResponse> listproResponses) {
+        super(context, android.R.layout.simple_dropdown_item_1line, listproResponses);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView textView = (TextView) super.getView(position, convertView, parent);
-        ListcliResponse item = getItem(position);
+        ListproResponse item = getItem(position);
         if (item != null) {
-            textView.setText(item.getRazonsocial());
+            textView.setText(item.getDesproduc());
         }
         return textView;
     }
@@ -31,11 +30,10 @@ public class ClienteAutoCompleteAdapter extends ArrayAdapter<ListcliResponse> {
     @Override
     public View getDropDownView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         TextView textView = (TextView) super.getDropDownView(position, convertView, parent);
-        ListcliResponse item = getItem(position);
+        ListproResponse item = getItem(position);
         if (item != null) {
-            textView.setText(item.getRazonsocial());
+            textView.setText(item.getDesproduc());
         }
         return textView;
     }
-
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import pe.edu.idat.apppedidos.retrofit.response.ListcliResponse;
 import pe.edu.idat.apppedidos.retrofit.response.ListpedResponse;
+import pe.edu.idat.apppedidos.retrofit.response.ListproResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -17,5 +18,8 @@ public interface MobileServicio {
 
     @GET("cliente/buscarPorRazonSocialParcial/{partialRazonSocial}")
     Call<List<ListcliResponse>> sugerenciasPorRazonSocial(@Path("partialRazonSocial") String razonSocial);
+
+    @GET("producto/buscarPorDescripcionParcial/{partialDescripcion}")
+    Call<List<ListproResponse>> sugerenciasPorDescripcion(@Path("partialDescripcion") String descripcion);
 
 }
