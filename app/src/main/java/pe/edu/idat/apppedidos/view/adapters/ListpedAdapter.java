@@ -27,10 +27,12 @@ public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHold
         ));
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ListpedAdapter.ViewHolder holder, int position) {
         final ListpedResponse listpedResponse = listpedResponseList
                 .get(position);
+        holder.binding.tvid.setText(String.valueOf(listpedResponse.getIdped()));
         holder.binding.tvrazonsocial.setText(listpedResponse.getRazonsocial());
         holder.binding.tvdocumento.setText(listpedResponse.getDocumento());
         holder.binding.tvfchareparto.setText(listpedResponse.getFchareparto());
@@ -42,8 +44,10 @@ public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHold
     }
 
     public void setPedidos(List<ListpedResponse> pedidos){
+        listpedResponseList.clear();
         listpedResponseList.addAll(pedidos);
         notifyDataSetChanged();
+        listpedResponseListOriginal.clear();
         listpedResponseListOriginal.addAll(pedidos);
     }
 
