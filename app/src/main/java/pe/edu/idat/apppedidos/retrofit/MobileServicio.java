@@ -27,6 +27,9 @@ public interface MobileServicio {
     @GET("pedido/buscarPorRazonSocial/{razonSocial}")
     Call<ListcliResponse> buscarClientePorRazonSocial(@Path("razonSocial") String razonSocial);
 
+    @DELETE("pedido/eliminar/{id}")
+    Call<String> eliminacionPedido(@Path("id") int id);
+
     @GET("cliente/buscarPorRazonSocialParcial/{partialRazonSocial}")
     Call<List<ListcliResponse>> sugerenciasPorRazonSocial(@Path("partialRazonSocial") String razonSocial);
 

@@ -53,5 +53,19 @@ public class ListpedViewModel extends AndroidViewModel {
         Log.e("ListpedViewModel", "Error en la conexión", t);
     }
 
+    public void eliminarPedido(int idPedido){
+        new MobileCliente().getInstance().eliminacionPedido(idPedido)
+                .enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
+    }
 
 }

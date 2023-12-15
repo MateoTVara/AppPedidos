@@ -1,6 +1,7 @@
 package pe.edu.idat.apppedidos.view.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,17 @@ public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHold
         ));
     }
 
+    // Interfaz para manejar eventos del botón btnborrardetalle
+    public interface OnDeleteButtonClickListener {
+        void onDeleteButtonClick(int idPed);
+    }
+
+    private ListpedAdapter.OnDeleteButtonClickListener onDeleteButtonClickListener;
+
+    // Método para establecer el listener desde fuera del adaptador
+    public void setOnDeleteButtonClickListener(ListpedAdapter.OnDeleteButtonClickListener listener) {
+        this.onDeleteButtonClickListener = listener;
+    }
 
     @Override
     public void onBindViewHolder(@NonNull ListpedAdapter.ViewHolder holder, int position) {
@@ -36,6 +48,16 @@ public class ListpedAdapter extends RecyclerView.Adapter<ListpedAdapter.ViewHold
         holder.binding.tvrazonsocial.setText(listpedResponse.getRazonsocial());
         holder.binding.tvdocumento.setText(listpedResponse.getDocumento());
         holder.binding.tvfchareparto.setText(listpedResponse.getFchareparto());
+
+        holder.binding.btndelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Llama al método de la interfaz para manejar la eliminación del detalle
+                if (onDeleteButtonClickListener != null) {
+                    onDeleteButtonClickListener.onDeleteButtonClick(listpedResponse.getIdped());
+                }
+            }
+        });
     }
 
     @Override

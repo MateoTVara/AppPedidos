@@ -25,7 +25,6 @@ public class ListpedFragment extends Fragment
         implements SearchView.OnQueryTextListener {
 
     private FragmentListpedBinding binding;
-
     private ListpedViewModel listpedViewModel;
     private ListpedAdapter listpedAdapter = new ListpedAdapter();
 
@@ -50,7 +49,12 @@ public class ListpedFragment extends Fragment
                     }
                 }
         );
+
+        listpedViewModel = new ViewModelProvider(this).get(ListpedViewModel.class);
+
         binding.svlisped.setOnQueryTextListener(this);
+
+        borrarPedido();
         // Inflate the layout for this fragment
         return binding.getRoot();
     }
@@ -65,4 +69,15 @@ public class ListpedFragment extends Fragment
         listpedAdapter.filtrarPedidos(newText);
         return false;
     }
+
+    private void borrarPedido(){
+        listpedAdapter.setOnDeleteButtonClickListener(new ListpedAdapter.OnDeleteButtonClickListener() {
+            @Override
+            public void onDeleteButtonClick(int idPed) {
+                listpedViewModel.eliminarPedido(idPed);
+                listpedViewModel.listarPedidos();
+            }
+        });
+    }
+
 }
