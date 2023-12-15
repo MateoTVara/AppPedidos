@@ -26,11 +26,14 @@
     <string name="ptcantidad">Cantidad</string>
     <string name="ptprecio">Precio</string>
     <string name="textbtncancelar">Cancelar</string>
-    <string name="textbtnregistrar">REGISTRAR</string>
+    <string name="textbtnregistrar">GUARDAR</string>
     <string name="textbtnagregardetalle">AGREGAR DETALLE</string>
     <string name="tvdescripcion">Descripción</string>
     <string name="tviunidad">Unidad</string>
     <string name="tvcantidad">Cantidad</string>
     <string name="tvimporter">Importe</string>
     <string name="tvacciones">Acciones</string>
+    <string name="ptidped">N°</string>
+    <string name="textids">ID</string>
+    <string name="btnactualizarlistado">Actualizar Listado</string>
 </resources>
