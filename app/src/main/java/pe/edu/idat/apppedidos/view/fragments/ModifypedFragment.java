@@ -3,6 +3,7 @@ package pe.edu.idat.apppedidos.view.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,13 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.*;
-import android.widget.*;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.List;
+import java.util.Locale;
 
-import pe.edu.idat.apppedidos.bd.entity.Pedido;
+import pe.edu.idat.apppedidos.R;
 import pe.edu.idat.apppedidos.databinding.FragmentCreapedBinding;
+import pe.edu.idat.apppedidos.databinding.FragmentModifypedBinding;
+import pe.edu.idat.apppedidos.retrofit.request.ModifypedRequest;
 import pe.edu.idat.apppedidos.retrofit.request.RegisdetalleRequest;
 import pe.edu.idat.apppedidos.retrofit.request.RegispedRequest;
 import pe.edu.idat.apppedidos.retrofit.response.ListcliResponse;
@@ -33,10 +42,9 @@ import pe.edu.idat.apppedidos.viewmodel.ListdetalleViewModel;
 import pe.edu.idat.apppedidos.viewmodel.ListpedViewModel;
 import pe.edu.idat.apppedidos.viewmodel.PedidoViewModel;
 
+public class ModifypedFragment extends Fragment {
 
-public class CreapedFragment extends Fragment {
-
-    private FragmentCreapedBinding binding;
+    private FragmentModifypedBinding binding;
     private ListdetalleViewModel listdetalleViewModel;
     private ListdetailsAdapter listdetailsAdapter = new ListdetailsAdapter();
     private CreapedViewModel creapedViewModel;
@@ -62,10 +70,11 @@ public class CreapedFragment extends Fragment {
     private EditText ptidped;
     private TextView tvtotal;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentCreapedBinding.inflate(inflater, container, false);
+        binding = FragmentModifypedBinding.inflate(inflater, container, false);
         listdetalleViewModel = new ViewModelProvider(requireActivity())
                 .get(ListdetalleViewModel.class);
         listpedViewModel = new ViewModelProvider(requireActivity())
@@ -80,7 +89,7 @@ public class CreapedFragment extends Fragment {
                     @Override
                     public void onChanged(List<ListdetalleResponse> listdetalleResponses) {
                         listdetailsAdapter.setDetalles(listdetalleResponses);
-                        actualizarTotal(listdetalleResponses);
+                        actualizarSumaImportes();
                     }
                 }
         );
@@ -112,43 +121,46 @@ public class CreapedFragment extends Fragment {
         tvtotal = binding.tvtotal;
 
         creapedViewModel = new ViewModelProvider(this).get(CreapedViewModel.class);
-
         if (getArguments() != null && getArguments().containsKey("idped")) {
             int idped = getArguments().getInt("idped");
-
             // Ahora puedes utilizar el idped para obtener los detalles del pedido
+            creapedViewModel.listarDetallesPorPedido(idped);
             listpedViewModel.buscarPedidoDetallado(idped);
         }
-        listpedViewModel.listpeddetailedResponseMutableLiveData.observe(getViewLifecycleOwner(), new Observer<ListpeddetailedResponse>() {
+        listpedViewModel.listpeddetailedResponseMutableLiveData
+                .observe(getViewLifecycleOwner(), new Observer<ListpeddetailedResponse>() {
             @Override
             public void onChanged(ListpeddetailedResponse listpeddetailedResponse) {
                 // Aquí puedes actualizar la vista con los detalles del pedido
                 if (listpeddetailedResponse != null) {
                     // Actualizar la vista con los detalles del pedido
                     actualizarVistaConDetalles(listpeddetailedResponse);
+                    actualizarSumaImportes();
                 }
             }
         });
+        creapedViewModel.detallesPorPedidoLiveData.observe(
+                getViewLifecycleOwner(),
+                new Observer<List<ListdetalleResponse>>() {
+                    @Override
+                    public void onChanged(List<ListdetalleResponse> listdetalleResponses) {
+                        // Actualizar la vista con los detalles del pedido
+                        listdetailsAdapter.setDetalles(listdetalleResponses);
+                    }
+        });
 
-        listdetalleViewModel.listarDetallesNoAsignados();
         setupViewsCliente();
         setupViewsProducto();
         setupViewsUsuarios();
         setupAgregarDetalleButton();
-        onclickActualizarListado();
         borrarDetalle();
-        setupGuardarPedidoButton();
-        cancelarPedido();
+        setupModificarPedidoButton();
+        setupActualizarListadoButton();
+        actualizarSumaImportes();
+        setupCancelarButton();
 
-        limpiarCampos();
-
+        // Inflate the layout for this fragment
         return binding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        limpiarCampos(); // Limpia los campos cada vez que el fragmento vuelve a estar en primer plano
     }
 
     private void setupViewsCliente() {
@@ -261,6 +273,18 @@ public class CreapedFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
+    private void actualizarVistaConDetalles(ListpeddetailedResponse listpeddetailedResponse) {
+        ptidped.setText(String.valueOf(listpeddetailedResponse.getIdped()));
+        ptidcli.setText(String.valueOf(listpeddetailedResponse.getIdcli()));
+        ptidusu.setText(String.valueOf(listpeddetailedResponse.getIdusu()));
+        ptdocumento.setText(listpeddetailedResponse.getDocumento());
+        ptrazonsocial.setText(listpeddetailedResponse.getRazonsocial());
+        ptvendedor.setText(listpeddetailedResponse.getNombre());
+        ptfchareparto.setText(listpeddetailedResponse.getFchareparto());
+        ptrucdni.setText(listpeddetailedResponse.getRucdni());
+        ptdireccion.setText(listpeddetailedResponse.getDireccion());
+    }
+
     private void setupAgregarDetalleButton() {
         if (btnagregardetalle != null){
             btnagregardetalle.setOnClickListener(new View.OnClickListener() {
@@ -269,27 +293,30 @@ public class CreapedFragment extends Fragment {
                     // Paso 1: Obtener valores de ptidproduc y ptcantidadproducto
                     String idproducText = ptidproduc.getText().toString().trim();
                     String cantidadText = ptcantidadproducto.getText().toString().trim();
+                    String idpedText = ptidped.getText().toString().trim();
 
-                    if (!idproducText.isEmpty() && !cantidadText.isEmpty()) {
+                    if (!idproducText.isEmpty() && !cantidadText.isEmpty() && !idpedText.isEmpty()) {
                         try {
                             // Ambas cadenas no están vacías, puedes convertirlas a números enteros
                             int idproduc = Integer.parseInt(idproducText);
                             int cantidad = Integer.parseInt(cantidadText);
+                            int idped = Integer.parseInt(idpedText);
 
                             // Paso 2: Crear el objeto RegisdetalleRequest
                             RegisdetalleRequest regisdetalleRequest = new RegisdetalleRequest();
                             regisdetalleRequest.setIdproduc(idproduc);
                             regisdetalleRequest.setCantidad(cantidad);
+                            regisdetalleRequest.setIdped(idped);
 
                             // Paso 3: Llamar al método registrarDetalleParcial del viewModel
-                            creapedViewModel.registrarDetalleParcial(regisdetalleRequest);
+                            creapedViewModel.registrarDetalleParcialConIdped(regisdetalleRequest);
 
-                            // Paso 4: Después de agregar el detalle, actualizar la lista llamando a listarDetalles
-                            listdetalleViewModel.listarDetallesNoAsignados();
+                            actualizarListadoDetalles();
                             limpiarDetallesCampos();
+                            actualizarSumaImportes();
                         } catch (NumberFormatException e) {
                             // Manejar la excepción si ocurre un formato incorrecto al convertir a entero
-                            Log.e("CreapedFragment", "Error al convertir cadena a número", e);
+                            Log.e("ModifypedFragment", "Error al convertir cadena a número", e);
                             // Puedes mostrar un mensaje de error al usuario o tomar otra acción según tus necesidades.
                         }
                     } else {
@@ -299,20 +326,9 @@ public class CreapedFragment extends Fragment {
                 }
             });
         }else{
-            Log.e("CreapedFragment", "btnagregardetalle es nulo");
+            Log.e("ModifypedFragment", "btnagregardetalle es nulo");
         }
 
-    }
-
-    private void borrarDetalle(){
-        listdetailsAdapter.setOnDeleteButtonClickListener(new ListdetailsAdapter.OnDeleteButtonClickListener() {
-            @Override
-            public void onDeleteButtonClick(int idDetalle) {
-                // Llama al método para eliminar el detalle en el ViewModel
-                creapedViewModel.eliminarDetalle(idDetalle);
-                listdetalleViewModel.listarDetallesNoAsignados();
-            }
-        });
     }
 
     private void limpiarDetallesCampos(){
@@ -321,67 +337,6 @@ public class CreapedFragment extends Fragment {
         ptunidadproducto.getText().clear();
         ptcantidadproducto.getText().clear();
         ptprecioproducto.getText().clear();
-    }
-
-    private void setupGuardarPedidoButton() {
-        if (btnguardar != null) {
-            btnguardar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Paso 1: Obtener valores de los campos requeridos
-                    String documento = ptdocumento.getText().toString().trim().toUpperCase();
-                    String idcliText = ptidcli.getText().toString().trim();
-                    String fchareparto = ptfchareparto.getText().toString().trim();
-                    String idusuText = ptidusu.getText().toString().trim();
-
-                    if (!documento.isEmpty() && !idcliText.isEmpty() && !fchareparto.isEmpty() && !idusuText.isEmpty()) {
-                        try {
-                            // Ambas cadenas no están vacías, puedes convertirlas a números enteros
-                            int idcli = Integer.parseInt(idcliText);
-                            int idusu = Integer.parseInt(idusuText);
-
-                            // Paso 2: Crear el objeto RegispedRequest
-                            RegispedRequest regispedRequest = new RegispedRequest();
-                            regispedRequest.setDocumento(documento);
-                            regispedRequest.setIdcli(idcli);
-                            regispedRequest.setFchareparto(fchareparto);
-                            regispedRequest.setIdusu(idusu);
-
-                            // Paso 3: Llamar al método registrarPedido del viewModel
-                            creapedViewModel.registrarPedido(regispedRequest);
-
-                            limpiarPedidosCampos();
-
-                            listdetalleViewModel.listarDetallesNoAsignados();
-
-                            // Paso 4: Después de guardar el pedido, puedes realizar alguna acción adicional si es necesario
-
-                        } catch (NumberFormatException e) {
-                            // Manejar la excepción si ocurre un formato incorrecto al convertir a entero
-                            Log.e("CreapedFragment", "Error al convertir cadena a número", e);
-                            // Puedes mostrar un mensaje de error al usuario o tomar otra acción según tus necesidades.
-                        }
-                    } else {
-                        // Manejar el caso en que una o varias cadenas estén vacías
-                        // Puedes mostrar un mensaje al usuario o tomar otra acción según tus necesidades.
-                    }
-                }
-            });
-        } else {
-            Log.e("CreapedFragment", "btnguardar es nulo");
-        }
-    }
-
-    private void cancelarPedido(){
-        btncancelar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                creapedViewModel.eliminarDetallesNoAsignados();
-                limpiarPedidosCampos();
-                limpiarDetallesCampos();
-                listdetalleViewModel.listarDetallesNoAsignados();
-            }
-        });
     }
 
     private void limpiarPedidosCampos() {
@@ -396,61 +351,115 @@ public class CreapedFragment extends Fragment {
         ptidped.getText().clear();
     }
 
-
-    private void onclickActualizarListado(){
-        btnactualizarlistado.setOnClickListener(new View.OnClickListener() {
+    private void borrarDetalle(){
+        listdetailsAdapter.setOnDeleteButtonClickListener(new ListdetailsAdapter.OnDeleteButtonClickListener() {
             @Override
-            public void onClick(View v) {
-                listdetalleViewModel.listarDetallesNoAsignados();
+            public void onDeleteButtonClick(int idDetalle) {
+                String idpedText = ptidped.getText().toString().trim();
+                int idped = Integer.parseInt(idpedText);
+                // Llama al método para eliminar el detalle en el ViewModel
+                creapedViewModel.eliminarDetalle(idDetalle);
+                creapedViewModel.listarDetallesPorPedido(idped);
+                actualizarSumaImportes();
             }
         });
     }
 
-    private void actualizarVistaConDetalles(ListpeddetailedResponse listpeddetailedResponse) {
-        ptidped.setText(String.valueOf(listpeddetailedResponse.getIdped()));
-        ptidcli.setText(String.valueOf(listpeddetailedResponse.getIdcli()));
-        ptidusu.setText(String.valueOf(listpeddetailedResponse.getIdusu()));
-        ptdocumento.setText(listpeddetailedResponse.getDocumento());
-        ptrazonsocial.setText(listpeddetailedResponse.getRazonsocial());
-        ptvendedor.setText(listpeddetailedResponse.getNombre());
-        ptfchareparto.setText(listpeddetailedResponse.getFchareparto());
-        ptrucdni.setText(listpeddetailedResponse.getRucdni());
-        ptdireccion.setText(listpeddetailedResponse.getDireccion());
-    }
+    private void setupModificarPedidoButton() {
+        if (btnguardar != null) {
+            btnguardar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Paso 1: Obtener valores de los campos requeridos
+                    String idpedText = ptidped.getText().toString().trim();
+                    String documento = ptdocumento.getText().toString().trim().toUpperCase();
+                    String idcliText = ptidcli.getText().toString().trim();
+                    String fchareparto = ptfchareparto.getText().toString().trim();
+                    String idusuText = ptidusu.getText().toString().trim();
 
-    private void actualizarTotal(List<ListdetalleResponse> detalles) {
-        double total = 0.0;
-        for (ListdetalleResponse detalle : detalles) {
-            total += detalle.getImporte();
+                    if (!documento.isEmpty() && !idcliText.isEmpty() && !fchareparto.isEmpty() && !idusuText.isEmpty()) {
+                        try {
+                            int idped = Integer.parseInt(idpedText);
+                            // Ambas cadenas no están vacías, puedes convertirlas a números enteros
+                            int idcli = Integer.parseInt(idcliText);
+                            int idusu = Integer.parseInt(idusuText);
+
+                            // Paso 2: Crear el objeto RegispedRequest
+                            ModifypedRequest modifypedRequest = new ModifypedRequest();
+                            modifypedRequest.setDocumento(documento);
+                            modifypedRequest.setIdcli(idcli);
+                            modifypedRequest.setFchareparto(fchareparto);
+                            modifypedRequest.setIdusu(idusu);
+
+                            // Paso 3: Llamar al método registrarPedido del viewModel
+                            creapedViewModel.modificarPedido(idped, modifypedRequest);
+                            regresarALaVistaAnterior();
+
+                        } catch (NumberFormatException e) {
+                            // Manejar la excepción si ocurre un formato incorrecto al convertir a entero
+                            Log.e("ModifypedFragment", "Error al convertir cadena a número", e);
+                            // Puedes mostrar un mensaje de error al usuario o tomar otra acción según tus necesidades.
+                        }
+                    } else {
+                        // Manejar el caso en que una o varias cadenas estén vacías
+                        // Puedes mostrar un mensaje al usuario o tomar otra acción según tus necesidades.
+                    }
+                }
+            });
+        } else {
+            Log.e("ModifypedFragment", "btnguardar es nulo");
         }
-
-        // Muestra el total en el TextView
-        tvtotal.setText(String.format("Total: $%.2f", total));
-    }
-    private void limpiarCampos() {
-        ptrazonsocial.getText().clear();
-        ptidcli.getText().clear();
-        ptrucdni.getText().clear();
-        ptdireccion.getText().clear();
-        ptdescripcionproducto.getText().clear();
-        ptidproduc.getText().clear();
-        ptunidadproducto.getText().clear();
-        ptprecioproducto.getText().clear();
-        ptcantidadproducto.getText().clear();
-        ptdocumento.getText().clear();
-        ptfchareparto.getText().clear();
-        ptidusu.getText().clear();
-        ptvendedor.getText().clear();
-        ptidped.getText().clear();
     }
 
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Ejecutar acciones al salir de la vista del fragmento
-        creapedViewModel.eliminarDetallesNoAsignados();
-        limpiarPedidosCampos();
-        limpiarDetallesCampos();
+    private void setupActualizarListadoButton() {
+        btnactualizarlistado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actualizarListadoDetalles();
+            }
+        });
     }
+
+    private void actualizarListadoDetalles() {
+        // Obtén el idped actual
+        String idpedText = ptidped.getText().toString().trim();
+        if (!idpedText.isEmpty()) {
+            try {
+                int idped = Integer.parseInt(idpedText);
+
+                // Llama al método para actualizar la lista de detalles
+                creapedViewModel.listarDetallesPorPedido(idped);
+                actualizarSumaImportes();
+            } catch (NumberFormatException e) {
+                Log.e("ModifypedFragment", "Error al convertir cadena a número", e);
+            }
+        }
+    }
+
+    private void actualizarSumaImportes() {
+        double sumaImportes = listdetailsAdapter.calcularSumaImportes();
+        tvtotal.setText(String.format(Locale.getDefault(), "Total: %.2f", sumaImportes));
+    }
+
+    private void setupCancelarButton() {
+        if (btncancelar != null) {
+            btncancelar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    regresarALaVistaAnterior();
+                }
+            });
+        } else {
+            Log.e("ModifypedFragment", "btncancelar es nulo");
+        }
+    }
+
+    private void regresarALaVistaAnterior() {
+        // Obtén el FragmentManager
+        FragmentManager fragmentManager = getParentFragmentManager();
+
+        // Realiza la transacción para volver al Fragment anterior
+        fragmentManager.popBackStack();
+    }
+
 }

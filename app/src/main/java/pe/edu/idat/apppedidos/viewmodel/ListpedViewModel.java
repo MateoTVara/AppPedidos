@@ -11,6 +11,7 @@ import java.util.List;
 
 import pe.edu.idat.apppedidos.retrofit.MobileCliente;
 import pe.edu.idat.apppedidos.retrofit.response.ListpedResponse;
+import pe.edu.idat.apppedidos.retrofit.response.ListpeddetailedResponse;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,6 +19,9 @@ import retrofit2.Response;
 public class ListpedViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<ListpedResponse>> listMutableLiveData
+            = new MutableLiveData<>();
+
+    public MutableLiveData<ListpeddetailedResponse> listpeddetailedResponseMutableLiveData
             = new MutableLiveData<>();
 
     public ListpedViewModel(@NonNull Application application) {
@@ -63,6 +67,21 @@ public class ListpedViewModel extends AndroidViewModel {
 
                     @Override
                     public void onFailure(Call<String> call, Throwable t) {
+
+                    }
+                });
+    }
+
+    public void buscarPedidoDetallado(int idPedido){
+        new MobileCliente().getInstance().buscarPedidoDetallado(idPedido)
+                .enqueue(new Callback<ListpeddetailedResponse>() {
+                    @Override
+                    public void onResponse(Call<ListpeddetailedResponse> call, Response<ListpeddetailedResponse> response) {
+                        listpeddetailedResponseMutableLiveData.setValue(response.body());
+                    }
+
+                    @Override
+                    public void onFailure(Call<ListpeddetailedResponse> call, Throwable t) {
 
                     }
                 });

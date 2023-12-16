@@ -28,8 +28,8 @@ public class ListdetalleViewModel extends AndroidViewModel {
         super(application);
     }
 
-    public void listarDetalles(){
-        new MobileCliente().getInstance().listarDetalles()
+    public void listarDetallesNoAsignados(){
+        new MobileCliente().getInstance().listarDetallesNoAsignados()
                 .enqueue(new Callback<List<ListdetalleResponse>>() {
                     @Override
                     public void onResponse(Call<List<ListdetalleResponse>> call, Response<List<ListdetalleResponse>> response) {

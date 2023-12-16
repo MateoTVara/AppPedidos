@@ -50,6 +50,11 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.9")
     //Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    //ROOM
+    implementation("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    testImplementation("androidx.room:room-testing:2.6.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

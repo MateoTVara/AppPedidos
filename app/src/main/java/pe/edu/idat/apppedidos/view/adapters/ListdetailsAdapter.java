@@ -80,7 +80,13 @@ public class ListdetailsAdapter extends RecyclerView.Adapter<ListdetailsAdapter.
         }
     }
 
-
+    public double calcularSumaImportes() {
+        double suma = 0;
+        for (ListdetalleResponse detalle : listdetalleResponseList) {
+            suma += detalle.getImporte();
+        }
+        return suma;
+    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ItemDetallepedBinding binding;

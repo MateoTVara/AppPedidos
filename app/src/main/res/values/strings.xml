@@ -36,4 +36,5 @@
     <string name="ptidped">N°</string>
     <string name="textids">ID</string>
     <string name="btnactualizarlistado">Actualizar Listado</string>
+    <string name="modifypedfragmenttitle">Modificar Fragmento</string>
 </resources>
